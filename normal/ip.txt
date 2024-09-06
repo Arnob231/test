@@ -1,10 +1,1 @@
 
-IP                   : 182.252.73.48
-IP Type              : IPv4
-User OS              : Windows 10
-User Agent           : Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36
-Version              : 10.0;
-Browser              : Chrome
-Location             : Dhaka, Bangladesh, Asia
-GeoLocation(lat, lon): 23.810332, 90.4125181
-Currency             : Bangladeshi Taka
