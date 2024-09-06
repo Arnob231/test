@@ -114,10 +114,14 @@ def handle_verification(folder):
     
     if os.path.exists(ip_file):
         with open(ip_file, 'r') as file:
-            ip_info = file.read()
+            #ip_info = file.read()
             print(_colored("\rSOME ONE HAS CLICKED THE LINK!! INFO:", "red"),"\n")
             print(_colored("\r══════════════", "green"))
-            print(ip_info)
+            for line in file:
+                 stripped_line = line.strip()  # Remove leading and trailing whitespace
+                 if stripped_line:  # If the line is not blank
+                     print("\r" + stripped_line)  # Print with \r at the start
+
             print(_colored("\r══════════════", "green"))
         os.remove(ip_file)
         
