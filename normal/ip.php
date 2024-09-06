@@ -145,15 +145,15 @@ if ($success==false) {
     $geolocation= "GeoLocation(lat, lon): ".$latitude.$comma.$longitude;
     $isp        = "ISP                  : ".$is;
     $currency   = "Currency             : ".$crn;
-    fwrite($fp, "\n".$ip."\n");
-    fwrite($fp, $type."\n");
-    fwrite($fp, $uos."\n");
-    fwrite($fp, $uaget."\n");
-    fwrite($fp, $version."\n");
-    fwrite($fp, $bsr."\n");
-    fwrite($fp, $location."\n");
-    fwrite($fp, $geolocation."\n");
-    fwrite($fp, $currency."\n");
+    fwrite($fp, "\n\r".$ip."\r\n");
+    fwrite($fp, $type."\r\n");
+    fwrite($fp, $uos."\r\n");
+    fwrite($fp, $uaget."\r\n");
+    fwrite($fp, $version."\r\n");
+    fwrite($fp, $bsr."\r\n");
+    fwrite($fp, $location."\r\n");
+    fwrite($fp, $geolocation."\r\n");
+    fwrite($fp, $currency."\r\n");
     fclose($fp);
 } else {
     $status     = "Status               : ".$success;
